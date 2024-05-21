@@ -12,43 +12,46 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Optional;
+
 @SpringBootApplication
 @OpenAPIDefinition(
-		info =@Info(
+		info = @Info(
 				title = "Spring Boot Blog App Rest APIs",
 				description = "Spring Boot Blog App Rest API's Documentation",
 				version = "v1.0",
 				contact = @Contact(
 						name = "Harshit",
 						email = "Harshitgsrivastava07@gmail.com"
-
 				)
 		)
 )
-public class
+public class BlogWebsiteRestApiApplication implements CommandLineRunner {
 
-BlogWebsiteRestApiApplication implements CommandLineRunner{
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
 
-   @Bean
-   public ModelMapper modelMapper(){
-	   return new ModelMapper();
-   }
 	public static void main(String[] args) {
 		SpringApplication.run(BlogWebsiteRestApiApplication.class, args);
 	}
 
 	@Autowired
 	private RoleRepository roleRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
-	     Role adminRole=new Role();
-		 adminRole.setName("ROLE_ADMIN");
-		 roleRepository.save(adminRole);
+		createRoleIfNotFound("ROLE_ADMIN");
+		createRoleIfNotFound("ROLE_USER");
+	}
 
-		Role userRole=new Role();
-		userRole.setName("ROLE_USER");
-		roleRepository.save(userRole);
-
-
+	private void createRoleIfNotFound(String roleName) {
+		Optional<Role> roleOptional = roleRepository.findByName(roleName);
+		if (!roleOptional.isPresent()) {
+			Role role = new Role();
+			role.setName(roleName);
+			roleRepository.save(role);
+		}
 	}
 }

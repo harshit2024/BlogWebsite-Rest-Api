@@ -13,7 +13,7 @@ import java.util.IdentityHashMap;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "roles")
+@Table(name = "roles",uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 @Entity
 public class Role {
     @Id
